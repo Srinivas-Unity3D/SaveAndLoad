@@ -1,32 +1,57 @@
 ﻿using UnityEngine;
-using System.Collections;
+using UnityEngine.AI;
 
 public class EnemyMovement : MonoBehaviour
 {
-    Transform player;
-    PlayerHealth playerHealth;
-    EnemyHealth enemyHealth;
-    UnityEngine.AI.NavMeshAgent nav;
+    private Transform player;
+    private PlayerHealth playerHealth;
+    private EnemyHealth enemyHealth;
+    private NavMeshAgent nav;
+    private bool isInitialized = false;
 
-
-    void Awake ()
+    void Awake()
     {
-        player = GameObject.FindGameObjectWithTag ("Player").transform;
-        playerHealth = player.GetComponent <PlayerHealth> ();
-        enemyHealth = GetComponent <EnemyHealth> ();
-        nav = GetComponent <UnityEngine.AI.NavMeshAgent> ();
+        player = GameObject.FindGameObjectWithTag("Player").transform;
+        playerHealth = player.GetComponent<PlayerHealth>();
+        enemyHealth = GetComponent<EnemyHealth>();
+        nav = GetComponent<NavMeshAgent>();
     }
 
-
-    void Update ()
+    void OnEnable()
     {
-        if(enemyHealth.CurrentHealth > 0 && playerHealth.CurrentHealth > 0)
+        Invoke("InitializeNavMesh", 0.1f);
+    }
+
+    void InitializeNavMesh()
+    {
+        if (nav != null && nav.isOnNavMesh)
         {
-            nav.SetDestination (player.position);
+            isInitialized = true;
+        }
+        else
+        {
+            Invoke("InitializeNavMesh", 0.1f);
+        }
+    }
+
+    void Update()
+    {
+        if (!isInitialized || nav == null || !nav.isOnNavMesh)
+            return;
+
+        if (enemyHealth.currentHealth > 0 && playerHealth.CurrentHealth > 0)
+        {
+            nav.SetDestination(player.position);
         }
         else
         {
             nav.enabled = false;
         }
+    }
+
+    public void ResetNavMesh()
+    {
+        isInitialized = false;
+        InitializeNavMesh();
     }
 }

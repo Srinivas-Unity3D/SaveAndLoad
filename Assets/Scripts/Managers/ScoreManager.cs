@@ -2,22 +2,42 @@
 using UnityEngine.UI;
 using System.Collections;
 
-public class ScoreManager : MonoBehaviour
+public class ScoreManager : MonoBehaviour, ISaveable
 {
-
     public static int score;
-
     Text text;
     
-    void Awake ()
+    void Awake()
     {
-        text = GetComponent <Text> ();
-        score = 0;
+        text = GetComponent<Text>();
+        ResetScore();
     }
 
-    void Update ()
+    void Update()
     {
         text.text = "Score: " + score;
     }
 
+    public void ResetScore()
+    {
+        score = 0;
+        if (text != null)
+        {
+            text.text = "Score: " + score;
+        }
+    }
+
+    public void Save(SaveData saveData)
+    {
+        saveData.score = score;
+    }
+
+    public void Load(SaveData saveData)
+    {
+        score = saveData.score;
+        if (text != null)
+        {
+            text.text = "Score: " + score;
+        }
+    }
 }
