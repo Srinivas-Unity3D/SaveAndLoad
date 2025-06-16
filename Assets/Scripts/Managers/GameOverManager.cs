@@ -9,6 +9,8 @@ public class GameOverManager : MonoBehaviour
     private SaveManager saveManager;
     private bool isGameOver = false;
 
+    [SerializeField] GameObject saveLoadButton;
+
     void Awake()
     {
         anim = GetComponent<Animator>();
@@ -22,6 +24,7 @@ public class GameOverManager : MonoBehaviour
         {
             isGameOver = true;
             anim.SetTrigger("GameOver");
+            saveLoadButton.SetActive(false);
         }
     }
 
